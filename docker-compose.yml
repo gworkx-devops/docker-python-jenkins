@@ -1,0 +1,91 @@
+version: '3.6'
+
+services:
+  db-pgsql:
+    image: postgres:latest
+    hostname: pgsql
+    volumes:
+      - ./db-pgsql:/var/lib/postgresql/data
+      - ./db-archive:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_DB=db_datascience
+      - POSTGRES_USER=datascience
+      - POSTGRES_PASSWORD=datascience
+      - POSTGRES_INITDB_ARGS='--data-checksums'
+      - PGDATA='/var/lib/postgresql/data/pgdata'
+    networks:
+      - datascience-net
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: dnsrr
+      restart_policy:
+        condition: on-failure
+      placement: 
+        constraints: [node.hostname == gneo]   
+
+  adminer:
+    image: adminer:latest
+    hostname: adminer
+    environment:
+      - ADMINER_DESIGN=lucas-sandery
+    ports:
+      - '9020:8080'
+    networks:
+      - datascience-net
+    depends_on:
+      - db-pgsql
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement: 
+        constraints: [node.role == worker]   
+
+  app:
+    image: gworkx/datascience:conda
+    hostname: python
+    volumes:
+     - ./app-code:/app
+    environment:
+     - DB_HOST=db-pgsql
+     - DB_NAME=POSTGRES_DB
+     - DB_PASSWORD=POSTGRES_PASSWORD
+    entrypoint: /app/app.py
+    ports:
+      - '5020:8000'
+    networks:
+      - datascience-net
+    depends_on:
+      - db-pgsql
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement: 
+        constraints: [node.hostname == gdeb.luzangi.cloudns.cc]   
+
+  jupyter:
+    image: gworkx/datascience:jupyter
+    hostname: jupyter
+    volumes:
+     - ./jupyter-local:/home/jovyan/.local
+     - ./jupyter-notebook-conf:/home/jovyan/.jupyter
+     - ./jupyter-notebook-source:/home/jovyan/work/
+    environment:
+     - DB_HOST=db-pgsql
+     - DB_NAME=POSTGRES_DB
+     - DB_PASSWORD=POSTGRES_PASSWORD
+    ports:
+      - '5021:8888'
+    networks:
+      - datascience-net
+    depends_on:
+      - db-pgsql
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement: 
+        constraints: [node.hostname == gneo]   
+
+networks:
+  datascience-net:
+    driver: overlay

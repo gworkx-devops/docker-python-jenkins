@@ -1,0 +1,17 @@
+{
+    "cloud providers": ["azure","aws","digitalocean","bitnami"],
+    "proxy servers": ["nginx","pound","privoxy"],
+    "mail servers": ["postfix","cyrusimap","ssmtp","mailgun","msmtp"],
+    "web servers": ["apache","lighttpd"],
+    "web micro/frameworks":["flask","bottle","silex","cakephp"],
+    "databases": ["sqlite","unqlite","tinydb","couchbase","cassandra","redis"],
+    "network storage":["glusterfs","nfs","nbd","xnbd","sshfs","zfs","btrfs"],
+    "containers":["docker","rkt","ansible-container"],
+    "process daemons":["supervisord","tinit"],
+    "virtual machines":["qemu","virtualbox"],
+    "orchestration":["jenkins","ansible","chef"],
+    "hyperconvergence": ["sddc","sdn","sds"],
+    "web and apps":["wordpress","bootstrap","ui-kit","playsms","smsync"],
+    "data science":["pandas","numpy"],
+    "machine learning":["scikit-learn","tensorflow","keras","pytorch","nltk", "fasttext"]
+}

@@ -1,0 +1,16 @@
+{
+    "vim": "black belt",
+    "linux": "black belt",
+    "lamp stack": "black belt",
+    "php": "black belt",
+    "python": "brown belt",
+    "vagrant": "black belt",
+    "docker-swarm": "black belt",
+    "linux-containers": "yellow belt",
+    "blockchain": "yellow belt",
+    "ssh": "black belt", 
+    "ansible": "black belt", 
+    "tmux": "black belt",
+    "jupyter-notebook": "black belt",
+    "git": "black belt"
+}
