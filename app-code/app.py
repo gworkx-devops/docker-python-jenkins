@@ -2,7 +2,7 @@
 #
 # system level packages
 #
-import os, sys, json, jq
+import os, sys, json, jq, pickle
 
 #
 # web application level packages
@@ -17,7 +17,25 @@ from paste import httpserver
 import pandas as pd
 import numpy as np
 
+from sklearn import model_selection
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_wine
+
+#
+# define methods to process and predict data
+#
+trained_model = 'datasets/model_lr.sav'
+loaded_model = pickle.load(open(trained_model, 'rb'))
+
+#
+# jsonify numpy array
+#
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
 
 #
 # MACHINE LEARNING CAPABLE APP FOLLOWS
@@ -25,27 +43,8 @@ from sklearn.datasets import load_wine
 app = Bottle()
 
 @app.route('/')
-def default():
-    # load expertise key-value flatfile DB
-    with open('datasets/expertise.dict','r') as exps:
-        dict_exps = json.load(exps)
-
-    # return a jsonfied response
-    response.headers['Content-Type'] = 'application/json'
-    return json.dumps(dict_exps)
-
-@app.route('/api', method=['GET','POST']) # identical to @post('api') or @get('api')
+@app.route('/api')
 def application():
-    # load technology key-value flatfile DB
-    with open('datasets/tech.dict','r') as tech:
-        dict_tech = json.load(tech)
-
-    # return a jsonfied response
-    response.headers['Content-Type'] = 'application/json'
-    return json.dumps(dict_tech)
-
-@app.route('/goof', method=['GET','POST']) # identical to @post('goof') or @get('goof')
-def goof(): 
     raw_data = load_wine()
     features = pd.DataFrame(data=raw_data['data'],columns=raw_data['feature_names'])
     data = features
@@ -56,14 +55,68 @@ def goof():
     response.headers['Content-Type'] = 'application/json'
     return data.head(10).to_json()
 
-@app.route('/myip') # identical to @post('goof') or @get('goof')
-def show_ip():
-    ip = request.environ.get('REMOTE_ADDR')
-    # or ip = request.get('REMOTE_ADDR')
-    # or ip = request['REMOTE_ADDR']
+@app.route('/pair', method=['GET','POST'])
+def pair():
+    # collect the get/post params values
+    features = []
+    features.append(request.query.feat_1)
+    features.append(request.query.feat_2)
+    features.append(request.query.feat_3)
+
+    #
+    # Sina Example
+    #
+    flag = True
+    testRow = []
+    ingredients_dataframe = pd.read_csv('datasets/ingredients.csv')
+    for i in range(0, 239):
+        flag = False
+        for j in range(0, len(features)):
+            if ingredients_dataframe.iloc[i][0]==features[j]:
+                flag=True
+        if(flag==True):
+            testRow.append(1)
+        else:
+            testRow.append(0)
 
     # return a jsonfied response
-    #return template("Your IP Is : {{ip}}",ip=ip)
+    response.headers['Content-Type'] = 'application/json'
+    return json.dumps(testRow)
+    #return ingredients_dataframe.to_json()
+
+@app.route('/predict', method=['GET', 'POST'])
+def predict():
+    # collect the get/post params values
+    features = dict()
+    features['feat_1'] = request.query.feat_1
+    features['feat_2'] = request.query.feat_2
+    features['feat_3'] = request.query.feat_3
+
+    #
+    # Amir Example
+    #
+    ingredient = np.array([42., 52., 108., 171., 214., 232.])
+    testing = np.zeros((239,), dtype=int)
+    for i in range(len(ingredient)):
+        j = int(ingredient[i])
+        testing[j] = 1 
+
+    model = loaded_model.predict([testing])
+    json_dump = json.dumps({'model-prediction': model}, cls=NumpyEncoder)
+
+    # return a jsonfied response
+    response.headers['Content-Type'] = 'application/json'
+    return json_dump
+
+@app.route('/goof', method=['GET','POST']) # identical to @post('goof') or @get('goof')
+def goof(): 
+    # load expertise key-value flatfile DB
+    with open('datasets/expertise.dict','r') as exps:
+        dict_exps = json.load(exps)
+
+    # return a jsonfied response
+    response.headers['Content-Type'] = 'application/json'
+    return json.dumps(dict_exps)
 
 run(app, host='0.0.0.0', port=8000, debug=True, reloader=True)
 
