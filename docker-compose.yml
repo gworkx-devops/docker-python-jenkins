@@ -22,7 +22,7 @@ services:
       restart_policy:
         condition: on-failure
       placement: 
-        constraints: [node.hostname == gneo]   
+        constraints: [node.role == manager]
 
   adminer:
     image: adminer:latest
@@ -39,10 +39,10 @@ services:
       restart_policy:
         condition: on-failure
       placement: 
-        constraints: [node.role == worker]   
+        constraints: [node.role == manager]
 
   app:
-    image: gworkx/datascience:conda
+    image: gworkx/datascience:conda-workshop-latest
     hostname: python
     volumes:
      - ./app-code:/app
@@ -61,30 +61,7 @@ services:
       restart_policy:
         condition: on-failure
       placement: 
-        constraints: [node.hostname == gdeb.luzangi.cloudns.cc]   
-
-  jupyter:
-    image: gworkx/datascience:jupyter
-    hostname: jupyter
-    volumes:
-     - ./jupyter-local:/home/jovyan/.local
-     - ./jupyter-notebook-conf:/home/jovyan/.jupyter
-     - ./jupyter-notebook-source:/home/jovyan/work/
-    environment:
-     - DB_HOST=db-pgsql
-     - DB_NAME=POSTGRES_DB
-     - DB_PASSWORD=POSTGRES_PASSWORD
-    ports:
-      - '5021:8888'
-    networks:
-      - datascience-net
-    depends_on:
-      - db-pgsql
-    deploy:
-      restart_policy:
-        condition: on-failure
-      placement: 
-        constraints: [node.hostname == gneo]   
+        constraints: [node.role == manager]
 
 networks:
   datascience-net:
