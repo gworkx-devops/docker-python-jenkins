@@ -22,6 +22,8 @@ RUN set -x \
 
 WORKDIR /app
 
+# containerization of the app
+#
 ADD app-code/ ./
 
 # set web application libs

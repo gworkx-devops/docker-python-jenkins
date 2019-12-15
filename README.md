@@ -23,7 +23,7 @@ docker push gworkx/datascience:conda-workshop-latest
 
 ## HOW TO SPIN A CONTAINER FROM THE IMAGE
 
-+ To instantiate a docker container from the image execute the following steps:
++ To instantiate a standalone docker container from the image execute:
 
 ```sh
 #! /bin/bash
@@ -31,5 +31,29 @@ docker push gworkx/datascience:conda-workshop-latest
 #
 # start python web server with bottle or flask module
 #
-docker container run -d --name python-app-01 -p 8000:8000 -v $PWD/app-code gworkx/datascience:conda-workshop-latest
+docker container run -d --name python-app-01 -p 8000:8000 -v $PWD/app-code:/app:ro gworkx/datascience:conda-workshop-latest
+```
+
+## HOW TO DEPLOY MICROSERVICES WITH DOCKER SWARM
+
++ Setup a single node docker swarm cluster:
+
+```sh
+#! /bin/bash
+
+#
+# initialize single node swarm cluster
+#
+docker swarm init
+```
+
++ To orchestrate docker microservices deployment execute:
+
+```sh
+#! /bin/bash
+
+#
+# orchestrate microservice deployment
+#
+docker stack deploy -c docker-compose.yml conda
 ```
