@@ -31,5 +31,5 @@ docker push gworkx/datascience:conda-workshop-latest
 #
 # start python web server with bottle or flask module
 #
-docker container run -d --name python-app-01 -p 8000:8000 -v $PWD/data-source gworkx/datascience:conda-workshop-latest
+docker container run -d --name python-app-01 -p 8000:8000 -v $PWD/app-code gworkx/datascience:conda-workshop-latest
 ```
