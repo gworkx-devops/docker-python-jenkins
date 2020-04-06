@@ -3,7 +3,7 @@ FROM python:3-alpine
 
 # set environment variable
 #
-ARG VERSION="python-gwi"
+ARG VERSION="python-jenkins"
 
 # set maintenance info
 #
@@ -14,15 +14,18 @@ LABEL dev.gworkx.tech.release-date="2020-04-05"
 LABEL dev.gworkx.tech.version.is-production="$VERSION"
 
 RUN set -x \
-    && apk update && apk upgrade && apk add --no-cache build-base alpine-sdk bash \
-    man-pages icu openssl-dev python-dev libffi-dev \
+    && apk update && apk upgrade && apk add --no-cache autoconf automake libtool alpine-sdk build-base bash jq \
+    ca-certificates curl man-pages icu openssl-dev python3-dev libffi-dev libxml2-dev libxslt-dev \
     && rm -rf /var/cache/apk/*
+
+RUN curl -L https://github.com/jenkins-zh/jenkins-cli/releases/latest/download/jcli-linux-amd64.tar.gz|tar xzv \
+    && mv jcli /usr/local/bin/
 
 WORKDIR /app
 
 ADD ./app-code ./
 
-RUN pip install cython && pip install --no-cache-dir -r ./app-code/requirements.txt
+RUN pip3 install -U pip cython && pip install --no-cache-dir -r /app/requirements.txt
 
 EXPOSE 8000
 CMD ["python","app.py"]
