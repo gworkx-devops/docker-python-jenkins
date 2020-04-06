@@ -22,6 +22,7 @@ idna
 itsdangerous
 Jinja2
 jq
+jenkins-job-builder
 lxml
 MarkupSafe
 MonthDelta

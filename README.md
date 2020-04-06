@@ -55,5 +55,5 @@ docker swarm init
 #
 # orchestrate microservice deployment
 #
-docker stack deploy -c docker-compose.yml conda
+docker stack deploy -c docker-compose.yml jenkins-api
 ```
