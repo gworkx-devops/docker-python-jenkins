@@ -8,13 +8,13 @@ services:
       - ./db-pgsql:/var/lib/postgresql/data
       - ./db-archive:/docker-entrypoint-initdb.d
     environment:
-      - POSTGRES_DB=db_datascience
-      - POSTGRES_USER=datascience
-      - POSTGRES_PASSWORD=datascience
+      - POSTGRES_DB=db_jenkins
+      - POSTGRES_USER=jenkins
+      - POSTGRES_PASSWORD=jenkins
       - POSTGRES_INITDB_ARGS='--data-checksums'
       - PGDATA='/var/lib/postgresql/data/pgdata'
     networks:
-      - datascience-net
+      - jenkins-net
     deploy:
       mode: replicated
       replicas: 2
@@ -30,9 +30,9 @@ services:
     environment:
       - ADMINER_DESIGN=lucas-sandery
     ports:
-      - '9020:8080'
+      - '9030:8080'
     networks:
-      - datascience-net
+      - jenkins-net
     depends_on:
       - db-pgsql
     deploy:
@@ -42,7 +42,7 @@ services:
         constraints: [node.role == manager]
 
   app:
-    image: gworkx/datascience:conda-workshop-latest
+    image: gworkx/python:jenkins
     hostname: python
     volumes:
      - ./app-code:/app
@@ -52,9 +52,9 @@ services:
      - DB_PASSWORD=POSTGRES_PASSWORD
     entrypoint: /app/app.py
     ports:
-      - '5020:8000'
+      - '5030:8000'
     networks:
-      - datascience-net
+      - jenkins-net
     depends_on:
       - db-pgsql
     deploy:
@@ -64,5 +64,5 @@ services:
         constraints: [node.role == manager]
 
 networks:
-  datascience-net:
+  jenkins-net:
     driver: overlay

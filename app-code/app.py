@@ -2,7 +2,7 @@
 #
 # system level packages
 #
-import os, sys, json, jq, pickle
+import os, sys, json, jq, pickle, jenkins
 
 #
 # web application level packages
@@ -14,14 +14,14 @@ from paste import httpserver
 #
 # datascience and machine learning packages
 #
-import pandas as pd
-import numpy as np
-
-from sklearn import model_selection
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_wine
-
+#import pandas as pd
+#import numpy as np
+#
+#from sklearn import model_selection
+#from sklearn.linear_model import LogisticRegression
+#from sklearn.model_selection import train_test_split
+#from sklearn.datasets import load_wine
+#
 #
 # MACHINE LEARNING CAPABLE APP FOLLOWS
 #
@@ -30,11 +30,11 @@ app = Bottle()
 @app.route('/')
 @app.route('/api')
 def application():
-    raw_data = load_wine()
-    features = pd.DataFrame(data=raw_data['data'],columns=raw_data['feature_names'])
-    data = features
-    data['target']=raw_data['target']
-    data['class']=data['target'].map(lambda ind: raw_data['target_names'][ind])
+    #raw_data = load_wine()
+    #features = pd.DataFrame(data=raw_data['data'],columns=raw_data['feature_names'])
+    #data = features
+    #data['target']=raw_data['target']
+    #data['class']=data['target'].map(lambda ind: raw_data['target_names'][ind])
 
     # return a jsonfied response
     response.headers['Content-Type'] = 'application/json'

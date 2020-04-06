@@ -6,19 +6,19 @@
 #! /bin/bash
 
 #
-# baking a python/conda docker image
+# baking a python/jenkins docker image
 #
-# docker image build --no-cache -f Dockerfile.conda -t gworkx/datascience:conda-workshop-latest .
+# docker image build --no-cache -f Dockerfile.jenkins -t gworkx/python:jenkins .
 
 
-# image baking - python/conda
+# image baking - python/jenkins
 #
-docker image build -f Dockerfile.conda -t gworkx/datascience:conda-workshop-latest .
+docker image build -f Dockerfile.jenkins -t gworkx/python:jenkins .
 
 #
 # push the image to a remote registry
 #
-docker push gworkx/datascience:conda-workshop-latest
+docker push gworkx/python:jenkins
 ```
 
 ## HOW TO SPIN A CONTAINER FROM THE IMAGE
@@ -31,7 +31,7 @@ docker push gworkx/datascience:conda-workshop-latest
 #
 # start python web server with bottle or flask module
 #
-docker container run -d --name python-app-01 -p 8000:8000 -v $PWD/app-code:/app:ro gworkx/datascience:conda-workshop-latest
+docker container run -d --name python-app-01 -p 8000:8000 -v $PWD/app-code:/app:ro gworkx/python:jenkins
 ```
 
 ## HOW TO DEPLOY MICROSERVICES WITH DOCKER SWARM

@@ -1,0 +1,28 @@
+FROM python:3-alpine
+
+
+# set environment variable
+#
+ARG VERSION="python-gwi"
+
+# set maintenance info
+#
+LABEL dev.gworkx.tech.version="v2.0"
+LABEL vendor="Gelwa Workx"
+LABEL maintainer="gelwa.workx@gmail.com"
+LABEL dev.gworkx.tech.release-date="2020-04-05"
+LABEL dev.gworkx.tech.version.is-production="$VERSION"
+
+RUN set -x \
+    && apk update && apk upgrade && apk add --no-cache build-base alpine-sdk bash \
+    man-pages icu openssl-dev python-dev libffi-dev \
+    && rm -rf /var/cache/apk/*
+
+WORKDIR /app
+
+ADD ./app-code ./
+
+RUN pip install cython && pip install --no-cache-dir -r ./app-code/requirements.txt
+
+EXPOSE 8000
+CMD ["python","app.py"]

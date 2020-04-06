@@ -37,6 +37,7 @@ pyjq
 pyOpenSSL
 PySocks
 python-dateutil
+python-jenkins
 pytz
 PyYAML
 requests
